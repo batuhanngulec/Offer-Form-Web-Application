@@ -1,0 +1,212 @@
+﻿@model  Tuple<List<Deneme1.Models.Teklifler>, List<Deneme1.Models.MusteriInfo>>
+@{
+    Layout = null;
+
+    bool permission =Convert.ToBoolean(ViewData["permission"]);
+    var x=10;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <meta name="viewport" content="width=device-width" />
+    <title>Teklif Form</title>
+
+
+    <style>
+        .button {
+            background-color: #3072c3;
+            border: solid;
+            color: white;
+            padding: 15px 22px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            margin: 25px 5px;
+            cursor: pointer;
+        }
+    </style>
+
+
+</head>
+<body>
+    <br />
+    <h1 style="text-align:center">TEKLİF İSTEME FORMU</h1>
+    <br />
+    <br />
+    <br />
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Satıcı Ünvanı</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@ViewBag.Satici</td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <br />
+    <table width="1000px" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Teklif Sahibi </th>
+                <th>Adres</th>
+                <th>Vergi Dairesi/No</th>
+                <th>Tel - Faks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int j = 0;
+
+                foreach (var item in Model.Item2)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(m => Model.Item2[j].Sirket_Resmiad)</td>
+                        <td>@Html.DisplayFor(m => Model.Item2[j].Sirket_Adres1) <br />@Html.DisplayFor(m => Model.Item2[j].Sirket_Adres2) <br />İlçe:@Html.DisplayFor(m => Model.Item2[j].Sirket_Adresilce) <br />İl:@Html.DisplayFor(m => Model.Item2[j].Sirket_Adresil)</td>
+                        <td>@Html.DisplayFor(m => Model.Item2[j].Sirket_Vergidaire) <br /> <br />Vergi No: @Html.DisplayFor(m => Model.Item2[j].Sirket_Vergino)</td>
+
+                        <td>Telefon: @Html.DisplayFor(m => Model.Item2[j].Sirket_Tel)<br /> <br />Faks: @Html.DisplayFor(m => Model.Item2[j].Sirket_Sat_Fax) </td>
+
+                    </tr>
+                    j++;
+                }
+            }
+
+        </tbody>
+    </table>
+    <br />
+    <br />
+    <br />
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { id = "main-form", @class = "masked-input" }))
+    {
+        @Html.AntiForgeryToken()
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Malzeme Kodu </th>
+                    <th>Malzeme Adı</th>
+                    <th>Birim</th>
+                    <th>Miktar</th>
+                    <th>Marka</th>
+                    <th>Birim Fiyat</th>
+                    <th>Vade Gün</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 0;
+                    if (Model.Item1.Count > 0)
+                    {
+                        foreach (var item in Model.Item1)
+                        {
+                            @Html.HiddenFor(m => Model.Item1[i].Teklif_Id)
+                            @Html.HiddenFor(m => Model.Item1[i].Teklif_Stokkodu)
+                            @Html.HiddenFor(m => Model.Item1[i].Stok_Adi)
+                            @Html.HiddenFor(m => Model.Item1[i].Birim)
+                            @Html.HiddenFor(m => Model.Item1[i].Teklif_Miktar)
+                            @Html.HiddenFor(m => Model.Item1[i].Teklif_WebID)
+                            @Html.HiddenFor(m => Model.Item1[i].Teklif_Tarih)
+                            <tr>
+                                <td>@Html.DisplayFor(m => Model.Item1[i].Teklif_Stokkodu)</td>
+                                <td>@Html.DisplayFor(m => Model.Item1[i].Stok_Adi)</td>
+                                <td>@Html.DisplayFor(m => Model.Item1[i].Birim)</td>
+
+
+                                <td>@Html.DisplayFor(m => Model.Item1[i].Teklif_Miktar)</td>
+                                <td>@Html.EditorFor(m => Model.Item1[i].Teklif_Marka, new { htmlAttributes = new { maxlength = "100" , disabled=permission?"":"disabled"} })</td>
+                                <td>@Html.EditorFor(m => Model.Item1[i].Teklif_Birimfiyat, new { htmlAttributes = new { @class = "text-box single-line money-tl", @type = "text", disabled = permission ? "" : "disabled" } })</td>
+                                <td>@Html.EditorFor(m => Model.Item1[i].Teklif_VadeGun, new { htmlAttributes = new { @class = "test-box single-line number-vade", @type = "number", disabled = permission ? "" : "disabled" } })</td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                    else
+                    {
+
+                        <h2>KAYIT BULUNAMADI..</h2>
+
+                    }
+                }
+            </tbody>
+
+        </table>
+        if (permission)
+        {
+            <p align="right">
+                <input type="submit" value="KAYDET" class="button" />
+            </p>
+        }
+        else {      
+            <span class="text-danger">Daha önce kayıt edilen formlar değiştirilemez.</span>
+        }
+    }
+
+
+
+    <!--Scripts-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/plugins/custom/mask.js"></script>
+
+    <script>
+        $(document).ready(function () {//DOCUMENT READY START
+            const elements = document.getElementsByClassName("money-tl");
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].value = "";
+                var currencyMask = IMask(
+                    elements[i],
+                    {
+                        mask: 'num',
+                        blocks: {
+                            num: {
+                                // nested masks are available!
+                                mask: Number,
+                                thousandsSeparator: ''
+                            }
+                        }
+                    });
+            }
+
+            const vadeler = document.getElementsByClassName("number-vade");
+            for (var j = 0; j < vadeler.length; j++) {
+                vadeler[j].value = "";
+                var numberMask = IMask(
+                    vadeler[j],
+                    {
+                        mask: Number,
+                        min: 0,
+                        max: 1000000000000000000000000000,
+                        thousandsSeparator: ''
+                    });
+            }
+            const vadeler = document.getElementsByClassName("number-vade");
+            for (var j = 0; j < vadeler.length; j++) {
+                vadeler[j].value = "";
+                var numberMask = IMask(
+                    vadeler[j],
+                    {
+                        mask: Number,
+                        min: 0,
+                        max: 1000000000000000000000000000,
+                        thousandsSeparator: ''
+                    });
+            }
+
+
+            document.querySelector('form').onkeypress = checkEnter;
+            function checkEnter(e) {
+                e = e || event;
+                var txtArea = /textarea/i.test((e.target || e.srcElement).tagName);
+                return txtArea || (e.keyCode || e.which || e.charCode || 0) !== 13;
+            }
+        });//DOCUMENT  READY END
+    </script>
+</body>
+</html>
